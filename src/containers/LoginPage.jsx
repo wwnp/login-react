@@ -1,19 +1,45 @@
 import React from 'react'
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Login } from '../components/Login';
-// import { useAuth } from './../hooks/use-auth';
+import { Form } from '../components/Form'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../store/index';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+
 const LoginPage = () => {
-  // const {isAuth,email,token,id } = useAuth()
-  // console.log(isAuth)
-  const { email, token, id } = useSelector(state => state.user)
+  const dispatch = useDispatch()
+  let navigate = useNavigate();
+
+  const handleLogin = (email, password) => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        console.log(userCredential)
+        const user = userCredential.user;
+        dispatch(setUser({
+          email: user.email,
+          id: user.uid,
+          token: user.accessToken,
+        }))
+        navigate(`/`);
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        const errorMessage = error.message;
+        alert(errorMessage)
+      });
+  }
   return (
     <div>
       <h1>LoginPage</h1>
       <p>
         or <Link to='/register'>register</Link>
       </p>
-      <Login></Login>
+      <Form
+        title={'Sign In'}
+        handleClick={handleLogin}
+      >
+      </Form>
     </div>
   )
 }

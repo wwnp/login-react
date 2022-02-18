@@ -4,9 +4,8 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from './../hooks/use-auth';
 import { removeUser } from '../store/index'
 const HomePage = () => {
-  const { id, token, email, isAuth } = useAuth()
+  const { isAuth } = useAuth()
   const dispatch = useDispatch()
-
   return isAuth
     ? (
       <div>
